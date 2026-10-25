@@ -1,5 +1,32 @@
 # Parcel Grid Delivery Monitor
 
+## Download, setup and project overview
+
+A delivery-fleet monitoring prototype with explicit tenant boundaries.
+
+Fleet telemetry; alert acknowledgement; maintenance workflow; mission analytics; incident replay.
+
+![Project workflow illustration](docs/project-overview.svg)
+
+[Download source ZIP](https://github.com/ahpa5246-lgtm/parcel-_path/archive/refs/heads/main.zip) · [Changes and branches](https://github.com/ahpa5246-lgtm/parcel-_path/branches) · [Verification notes](docs/QUALITY_REVIEW.md)
+
+The ZIP contains source code. Installation steps and external runtime requirements are listed below.
+
+```bash
+git clone https://github.com/ahpa5246-lgtm/parcel-_path.git
+cd parcel-_path
+```
+
+From the repository directory:
+
+```text
+npm install
+npm run dev
+```
+
+The diagram is a project illustration. Test results and runtime limitations are recorded in [the review](docs/QUALITY_REVIEW.md); it is not a production-readiness certification.
+
+
 Vendor-agnostic monitoring for a completely fictional parcel-delivery robot network. Parcel Grid is an original demo name and does not represent, imitate, or imply endorsement by any real company.
 
 This vertical slice is real software backed by a deterministic in-memory simulator—not a hardcoded dashboard. Twenty fictional delivery units expose optional capabilities, payload capacity, parcel runs, pickup/drop-off stops, route progress and changing timestamped telemetry through a universal service boundary. Derived fleet totals, a documented health heuristic and explainable threshold evidence feed an Arabic/English monitoring workspace.

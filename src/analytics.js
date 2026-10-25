@@ -6,20 +6,20 @@
  */
 export function calculateHealth(sample, capabilities) {
   const parts = [];
-  if (capabilities.battery) {
+  if (capabilities.battery && [sample.batteryPercentage, sample.batteryTemperature].every(Number.isFinite)) {
     const charge = clamp(sample.batteryPercentage, 0, 100);
     const heatPenalty = clamp((sample.batteryTemperature - 38) * 3, 0, 45);
     parts.push({ key: "battery", score: clamp(charge - heatPenalty, 0, 100), weight: 0.3 });
   }
-  if (capabilities.motors) {
+  if (capabilities.motors && [sample.motorTemperature, sample.motorCurrent].every(Number.isFinite)) {
     const heatPenalty = clamp((sample.motorTemperature - 45) * 2.4, 0, 60);
     const currentPenalty = clamp((sample.motorCurrent - 3.2) * 11, 0, 45);
     parts.push({ key: "motors", score: clamp(100 - heatPenalty - currentPenalty, 0, 100), weight: 0.3 });
   }
-  if (capabilities.sensors) {
+  if (capabilities.sensors && Number.isFinite(sample.localizationQuality)) {
     parts.push({ key: "sensors", score: clamp(sample.localizationQuality, 0, 100), weight: 0.2 });
   }
-  if (capabilities.network) {
+  if (capabilities.network && [sample.networkLatency, sample.signalStrength].every(Number.isFinite)) {
     const latencyPenalty = clamp((sample.networkLatency - 80) / 6, 0, 60);
     parts.push({ key: "connectivity", score: clamp(sample.signalStrength - latencyPenalty, 0, 100), weight: 0.2 });
   }
@@ -42,7 +42,7 @@ export function detectAnomalies(history) {
 
   return rules.flatMap((rule) => {
     const value = latest[rule.metric];
-    if (typeof value !== "number") return [];
+    if (!Number.isFinite(value)) return [];
     const triggered = rule.direction === "high" ? value >= rule.threshold : value <= rule.threshold;
     if (!triggered) return [];
     const values = baseline.map((item) => item[rule.metric]).filter(Number.isFinite);
@@ -55,8 +55,8 @@ export function detectAnomalies(history) {
       metric: rule.metric,
       value: round(value),
       threshold: rule.threshold,
-      baselineMean: round(mean),
-      zScore: round(zScore),
+      baselineMean: values.length ? round(mean) : null,
+      zScore: values.length ? round(zScore) : null,
       observedAt: latest.observedAt,
       recommendation: "Human inspection recommended; no automatic physical action is permitted."
     }];
